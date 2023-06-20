@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<menuitem name="Edition Échéancier" id="edition_supplier" parent="account.menu_finance_entries" sequence="100" action="edition_echeancier.edition_action_window" />
+</odoo>

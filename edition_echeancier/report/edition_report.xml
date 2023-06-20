@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="repoer_edi_payment">
+            <t t-call="web.html_container">
+                    <t t-call="web.basic_layout">
+                        <div class="page">
+                            <div class="text-center" style="width: 100%; text-align: center !important ;border: 3px solid #000000;">
+                                <strong>
+                                   <h1>Edition Échéancier </h1>
+                                </strong>
+                            </div>
+                            <div style="padding-bottom: 30px ; padding-top: 10px;">
+                                <t t-if="date_from">
+                                     <span style="font-size: 18px ; text-decoration: underline; " >De: <span t-esc="date_from" t-options='{"widget": "date","format": "dd/MM/yyyy"}'/> </span>
+                                </t>
+
+                                <br/>
+                                <t t-if="date_to" >
+                                    <span style="font-size: 18px ; text-decoration: underline; "  >au: <span t-esc="date_to" t-options='{"widget": "date","format": "dd/MM/yyyy"}'/> </span>
+                                </t>
+
+                            </div>
+                            <br/>
+                            <table class="table table-bordered mb32" style="width: 100%; "  >
+                                 <thead>
+                                     <tr>
+                                         <th style="border: 1px solid #453634 !important;">Date</th>
+                                         <th style="border: 1px solid #453634 !important;">Réf</th>
+                                         <th style="border: 1px solid #453634 !important;">Partenaire</th>
+                                         <th style="border: 1px solid #453634 !important;">Montant</th>
+                                         <th style="border: 1px solid #453634 !important;">État</th>
+                                         <th style="border: 1px solid #453634 !important;">Type de transaction</th>
+                                     </tr>
+                                 </thead>
+
+                                 <tbody>
+                                    <t t-if="not grouped">
+                                     <t t-foreach="vals" t-as="doc">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                                 <t t-else="">
+                                                     <span></span>
+                                                 </t>
+
+                                             </td>
+                                         </tr>
+                                     </t>
+                                 </t>
+<!--                                     <t t-foreach="vals" t-as="doc">-->
+<!--                                         <tr>-->
+<!--                                              <td style="border: 1px solid #453634 !important; text-align: center ;">-->
+<!--                                                 <t t-all-style="style"  t-esc="doc['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>-->
+<!--                                             </td>-->
+<!--                                             <td style="border: 1px solid #453634 !important; text-align: center ;">-->
+<!--                                                  <t t-esc="doc['name']"/>-->
+<!--                                             </td>-->
+<!--                                             <td style="border: 1px solid #453634 !important; text-align: center ;">-->
+<!--                                                <t t-all-style="style" t-esc="doc['partner_id']"/>-->
+<!--                                             </td>-->
+<!--                                             <td style="border: 1px solid #453634 !important; text-align: center ;">-->
+<!--                                                 <t t-all-style="style" t-esc="doc['amount']"/>-->
+<!--                                             </td>-->
+<!--                                             <td style="border: 1px solid #453634 !important; text-align: center ;">-->
+<!--                                                 <t  t-all-style="style" t-esc="doc['state']"/>-->
+<!--                                             </td>-->
+<!--                                         </tr>-->
+<!--                                     </t>-->
+                                     <t t-if="grouped == true" >
+                                     <t t-foreach="vals1" t-as="doc1">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc1['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc1['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc1['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc1['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc1['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc1['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc1['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc1['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc1['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc1['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc1['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total1 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total1" /> </strong> </td></tr>
+                                     </t>
+                                     <t t-foreach="vals2" t-as="doc2">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc2['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc2['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc2['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc2['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc2['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc2['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc2['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc2['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc2['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc2['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc2['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total2 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " > <strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total2" /> </strong></td></tr>
+                                     </t>
+<!--                                     3-->
+                                     <t t-foreach="vals3" t-as="doc3">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc3['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc3['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc3['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc3['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc3['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc3['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc3['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc3['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc3['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc3['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc3['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total3 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ; " ><strong style=" color: #5c5959 ;" >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " > <strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total3" /> </strong> </td></tr>
+                                     </t>
+<!--                                     4-->
+                                     <t t-foreach="vals4" t-as="doc4">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc4['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc4['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc4['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc4['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc4['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc4['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc4['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc4['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc4['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc4['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc4['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total4 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total4" /></strong>  </td></tr>
+                                     </t>
+<!--                                     5-->
+                                      <t t-foreach="vals5" t-as="doc5">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc5['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc5['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc5['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc5['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc5['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc5['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc5['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc5['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc5['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc5['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc5['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total5 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total5" /></strong> </td></tr>
+                                     </t>
+<!--                                     6-->
+                                      <t t-foreach="vals6" t-as="doc6">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc6['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc6['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc6['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc="doc6['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc6['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc6['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc6['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc6['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc6['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc6['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc6['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total6 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total6" /></strong> </td></tr>
+                                     </t>
+<!--                                     7-->
+                                      <t t-foreach="vals7" t-as="doc7">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc7['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc7['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc7['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc="doc7['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc7['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc7['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc7['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc7['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc7['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc7['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc7['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total7 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  > <t t-esc=" '%.3f' % total7" /></strong> </td></tr>
+                                     </t>
+<!--                                     8-->
+                                     <t t-foreach="vals8" t-as="doc8">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc8['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc8['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc8['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc8['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc8['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc8['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc8['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc8['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc8['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc8['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc8['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total8 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total8" /></strong>  </td></tr>
+                                     </t>
+<!--                                     9-->
+                                     <t t-foreach="vals9" t-as="doc9">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc9['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc9['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc9['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc9['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                    <t t-if ="doc9['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc9['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc9['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc9['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc9['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc9['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc9['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total9 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total9" /></strong>  </td></tr>
+                                     </t>
+<!--                                     10-->
+                                     <t t-foreach="vals10" t-as="doc10">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc10['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc10['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc10['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc10['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc10['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc10['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc10['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc10['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc10['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc10['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc10['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total10 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total10" /> </strong> </td></tr>
+                                     </t>
+<!--                                     11-->
+                                      <t t-foreach="vals11" t-as="doc11">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc11['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc11['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc11['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc11['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc11['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc11['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc11['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc11['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc11['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc11['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc11['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total11 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;" ><strong  style=" color: #5c5959 ;"  >Total</strong></td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  ><t t-esc=" '%.3f' % total11" /></strong>  </td></tr>
+                                     </t>
+<!--                                     12-->
+                                     <t t-foreach="vals12" t-as="doc12">
+                                         <tr>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style"  t-esc="doc12['date']"  t-options='{"widget": "date","format": "dd/MM/yyyy"}'/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                  <t t-esc="doc12['name']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                <t t-all-style="style" t-esc="doc12['partner_id']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-all-style="style" t-esc=" '%.3f'% doc12['amount']"/>
+                                             </td>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                     <t t-if ="doc12['state'] == 'in_cash'">
+                                                     <span>En liquide</span>
+                                                 </t>
+                                                  <t t-if ="doc12['state'] == 'versed'">
+                                                     <span>Versé</span>
+                                                 </t>
+                                                 <t t-if ="doc12['state'] == 'paid'">
+                                                     <span>Payé</span>
+                                                 </t>
+                                                 <t t-if ="doc12['state'] == 'notice'">
+                                                     <span>Avis</span>
+                                                 </t>
+                                                 <t t-if ="doc12['state'] == 'cancel'">
+                                                     <span>Annulé</span>
+                                                 </t>
+                                             </td>
+                                              <td style="border: 1px solid #453634 !important; text-align: center ;">
+                                                 <t t-if ="doc12['type_transaction'] == 'receipt'">
+                                                     <span>Reçu</span>
+                                                 </t>
+                                                 <t t-if ="doc12['type_transaction'] == 'payment'">
+                                                     <span>Paiement</span>
+                                                 </t>
+                                             </td>
+                                         </tr>
+                                     </t>
+                                     <t t-if="total12 != 0 " >
+                                         <tr>
+                                             <td style="border: 1px solid #453634 !important; text-align: center ; text-color:#3b3b3b ; " ><strong  style=" color: #5c5959 ;"  >Total</strong> </td>
+                                             <td colspan="5" style="border: 1px solid #453634 !important; text-align: right ; " ><strong  style=" color: #5c5959 ;"  > <t t-esc=" '%.3f' % total12" />  </strong></td></tr>
+                                     </t>
+                                     </t>
+
+                                 </tbody>
+                            </table>
+                        </div>
+                    </t>
+             </t>
+        </template>
+    </data>
+</odoo>

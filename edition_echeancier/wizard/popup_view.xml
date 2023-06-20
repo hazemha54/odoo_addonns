@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="edition_form_view" model="ir.ui.view">
+            <field name="name">Edition échéancier reglements fournisseurs</field>
+            <field name="model">edition.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Popup Form" popup="True">
+                    <group>
+                        <field name="date_from"  class="oe_inline" />
+                        <field name="date_to"  class="oe_inline" />
+                    </group>
+                      <group>
+                          <group>
+                               <field name="supplier"  attrs="{'invisible':[('customer','not in',['',None,False])]}"   />
+                          </group>
+                          <group>
+                                <field name="customer" attrs="{'invisible':[('supplier','not in',['',None,False])]}" />
+                          </group>
+                    </group>
+                    <group>
+                        <field name="grouped"/>
+                    </group>
+
+                    <footer>
+                        <button name="print_report" string="Imprimé" type="object" class="oe_highlight" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="edition_action_window">
+            <field name="name">Edition échéancier reglements fournisseurs</field>
+            <field name="res_model">edition.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="edition_echeancier.edition_form_view"/>
+        </record>
+    </data>
+</odoo>
